@@ -7,12 +7,9 @@ typedef struct{
 	float d1,d2,d3;
 	float sum;
 } Student;
-int cmp(const void *a, const void *b){
-	Student *x = (Student *)a;
-	Student *y = (Student *)b;
-	if(x->sum < y->sum) return -1;
-	if(x->sum > y->sum) return 1;
-	return 0;
+int check(Student a){
+	if(a.d1 <= a.d2 && a.d2<=a.d3) return 1;
+	else return 0;
 }
 void xuat(Student a){
 	printf("%d %s %.1f %.1f %.1f\n", a.id, a.name, a.d1, a.d2, a.d3);
@@ -25,9 +22,8 @@ int main() {
 	while(1){
 		scanf("%d", &x);	
 		if(x==3){
-			qsort(a,n,sizeof(Student),cmp);
 			for(int i=0;i<n;i++) {
-				xuat(a[i]);
+				if(check(a[i])) xuat(a[i]);
 			}
 			break;
 		}
@@ -78,10 +74,10 @@ int main() {
 nguyen van hai
 8.5 5.5 7.5
 tran van tuan
-8.5 5.0 9.0
+8.5 6.5 9.0
 2
 2
 tran van nam
-5.5 5.0 6.0
+5.5 6.0 7.0
 3
 */

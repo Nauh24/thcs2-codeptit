@@ -1,96 +1,90 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <stdlib.h>
+#include <time.h>
 
-#define MAX_LEN 1001
-#define MAX_WORDS 500
+// Ð?nh nghia c?u trúc KhachHang
+typedef struct {
+    char id[10];
+    char name[100];
+    char soPhong[10];
+    int soNgay;
+    int tienPhatSinh;
+} KhachHang;
 
-void to_lower(char s[]) {
-    for (int i = 0; i < strlen(s); i++) {
-        s[i] = tolower(s[i]);
+// Hàm tính don giá d?a trên s? phòng
+int donGia(char soPhong[]) {
+    switch(soPhong[0]) {
+        case '1': return 25;
+        case '2': return 34;
+        case '3': return 50;
+        default: return 80;
     }
 }
 
-int cmp(const void *a, const void *b) {
-    return strcmp((const char *)a, (const char *)b);
+// Hàm tính ti?n thành ti?n
+int thanhTien(KhachHang kh) {
+    return kh.soNgay * donGia(kh.soPhong) + kh.tienPhatSinh;
 }
 
-void in(char s[][MAX_LEN], int n) {
-    for (int i = 0; i < n; i++) {
-        printf("%s ", s[i]);
-        
-    }
-    printf("\n");
+// Hàm so sánh d? s?p x?p theo thành ti?n gi?m d?n
+int compare(const void *a, const void *b) {
+    KhachHang *khA = (KhachHang *)a;
+    KhachHang *khB = (KhachHang *)b;
+    return thanhTien(*khB) - thanhTien(*khA);
 }
 
-int erase(char s[][MAX_LEN], int n) {
-    int idx = 0;
-    for (int i = 0; i < n; i++) {
-        if (i == 0 || strcmp(s[i], s[i - 1]) != 0) {
-            strcpy(s[idx++], s[i]);
-        }
-    }
-    return idx;
+// Hàm in thông tin khách hàng
+void printfKH(KhachHang kh) {
+    printf("%s %s %s %d %d\n", kh.id, kh.name, kh.soPhong, kh.soNgay, thanhTien(kh));
 }
 
 int main() {
-    char s1[MAX_LEN], s2[MAX_LEN];
+    int n;
+    scanf("%d", &n);
+    KhachHang a[n];
+    for (int i = 0; i < n; i++) {
+        // T?o ID cho khách hàng
+        sprintf(a[i].id, "KH%02d", i + 1);
 
-    gets(s1);
-    gets(s2);
+        // B? qua newline sau s? n
+        getchar();
 
-    char set1[MAX_WORDS][MAX_LEN], set2[MAX_WORDS][MAX_LEN];
-    int n1 = 0, n2 = 0;
+        // Nh?p tên khách hàng
+        fgets(a[i].name, sizeof(a[i].name), stdin);
+        a[i].name[strcspn(a[i].name, "\n")] = '\0';
 
-    to_lower(s1);
-    to_lower(s2);
+        // Nh?p s? phòng
+        fgets(a[i].soPhong, sizeof(a[i].soPhong), stdin);
+        a[i].soPhong[strcspn(a[i].soPhong, "\n")] = '\0';
 
-    char *token1 = strtok(s1, " ");
-    while (token1 != NULL) {
-        strcpy(set1[n1++], token1);
-        token1 = strtok(NULL, " ");
+        // Nh?p ngày d?n và ngày di
+        char ngayDen[11], ngayDi[11];
+        fgets(ngayDen, sizeof(ngayDen), stdin);
+        fgets(ngayDi, sizeof(ngayDi), stdin);
+
+        struct tm tmNgayDen = {0}, tmNgayDi = {0};
+        strptime(ngayDen, "%d/%m/%Y", &tmNgayDen);
+        strptime(ngayDi, "%d/%m/%Y", &tmNgayDi);
+
+        time_t tNgayDen = mktime(&tmNgayDen);
+        time_t tNgayDi = mktime(&tmNgayDi);
+
+        double seconds = difftime(tNgayDi, tNgayDen);
+        a[i].soNgay = (int)(seconds / (60 * 60 * 24)) + 1;
+
+        // Nh?p ti?n phát sinh
+        scanf("%d", &a[i].tienPhatSinh);
     }
 
-    char *token2 = strtok(s2, " ");
-    while (token2 != NULL) {
-        strcpy(set2[n2++], token2);
-        token2 = strtok(NULL, " ");
+    // S?p x?p theo thành ti?n gi?m d?n
+    qsort(a, n, sizeof(KhachHang), compare);
+
+    // In ra k?t qu?
+    for (int i = 0; i < n; i++) {
+        printfKH(a[i]);
     }
-
-    qsort(set1, n1, sizeof(set1[0]), cmp);
-    qsort(set2, n2, sizeof(set2[0]), cmp);
-
-    int idx1 = erase(set1, n1);
-    int idx2 = erase(set2, n2);
-
-    char hop[MAX_WORDS * 2][MAX_LEN], giao[50][MAX_LEN];
-    int i = 0, j = 0;
-    int cnt1 = 0, cnt2 = 0;
-
-    while (i < idx1 && j < idx2) {
-        int x = strcmp(set1[i], set2[j]);
-        if (x < 0) {
-            strcpy(hop[cnt1++], set1[i++]);
-        } else if (x > 0) {
-            strcpy(hop[cnt1++], set2[j++]);
-        } else {
-            strcpy(hop[cnt1++], set1[i]);
-            strcpy(giao[cnt2++], set1[i]);
-            i++;
-            j++;
-        }
-    }
-
-    while (i < idx1) {
-        strcpy(hop[cnt1++], set1[i++]);
-    }
-    while (j < idx2) {
-        strcpy(hop[cnt1++], set2[j++]);
-    }
-
-    in(hop, cnt1);
-    in(giao, cnt2);
 
     return 0;
 }
