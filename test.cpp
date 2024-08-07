@@ -1,53 +1,41 @@
 #include<stdio.h>
-int main() {
-	int t;
-	scanf("%d", &t);
-	while(t--){
-		int n,m;
-		scanf("%d %d\n", &n, &m);
-		int a[n][m];
-		int row_count[1000][3]={0};
-		int col_count[1000][3]={0};
-
-		char tmp[1001];
-		for(int i=0;i<n;i++){
-			gets(tmp);
-			for(int j=0;j<m;j++){
-				a[i][j]= tmp[j] - '0';
-				if(a[i][j]!=0) {
-				row_count[i][a[i][j]]++;
-				col_count[j][a[i][j]]++;
-				}
-			}
+#include<string.h>
+#include<stdlib.h>
+#include<ctype.h>
+void to_upper(char *s){
+	for(int i=0;i<strlen(s);i++) s[i]=toupper(s[i]);
+}
+void tranfer(char *s){
+	s[0]=toupper(s[0]);
+	for(int i=1;i<strlen(s);i++) s[i]=tolower(s[i]);
+}
+int main(){
+	int n;
+	scanf("%d\n", &n);
+	while(n--){
+		char s[51];
+		gets(s);
+		char *token = strtok(s, " ");
+		char a[51][51];
+		int n=0;
+		while(token!=NULL){
+			strcpy(a[n++], token);
+			token = strtok(NULL," ");
 		}
-//		for(int i=0;i<n;i++){
-//			for(int j=0;j<3;j++){
-//				printf("%d ",col_count[i][j]);
-//			}
-//			printf("\n");
-//		}
-		long long cnt=0;
-		for(int i=0 ;i<n;i++){
-			for(int j=0;j<m;j++){
-				if(a[i][j]!=0){
-					int p2=a[i][j];
-					for(int c=1;c<=2;c++){
-						if(p2!=c){
-							cnt+= row_count[i][c] * col_count[j][c];
-						}
-					}
-				}
-			}
+		for(int i=1;i<n;i++){
+			tranfer(a[i]);
+			printf("%s", a[i]);
+			if(i!=n-1) printf(" ");
 		}
-		printf("%lld", cnt);
-		printf("\n");
+		printf(", ");
+		to_upper(a[0]);
+		printf("%s\n",a[0]);
 	}
 }
 /*
-1
-3 3
-000
-201
-002
-*/
-
+4
+    nGUYEn    quaNG   vInH  
+   tRan   thi THU    huOnG
+   nGO   quoC  VINH
+ lE            tuAn    aNH
+ */

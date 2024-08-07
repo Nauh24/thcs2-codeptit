@@ -32,19 +32,27 @@ int cmp(const void *a, const void *b){
 }
 int main() {
 	int n;
-	scanf("%d\n", &n);
+	scanf("%d", &n);
 	KhachHang a[n];
+	getchar();
 	for(int i=0;i<n ;i++){
 		sprintf(a[i].id, "KH%02d", i+1);
-		
 		gets(a[i].name);
-		gets(a[i].soPhong);
+		while(isspace(a[i].name[strlen(a[i].name)-1])) {
+			a[i].name[strlen(a[i].name)-1] = '\0';
+		}
+		scanf("%s", a[i].soPhong);
 		char ngayDen[11], ngayDi[11];
-		gets(ngayDen);
-		gets(ngayDi);
+		scanf("%s", ngayDen);
+		scanf("%s", ngayDi);
 		scanf("%d", &a[i].tienPhatSinh);
-		
+		getchar();	
 	}
+	for(int i=0 ;i< n;i++){
+		printf("%s %s %s ", a[i].id, a[i].name, a[i].soPhong);
+		printf("\n");
+	}
+	//printf("1");
 }
 
 /*

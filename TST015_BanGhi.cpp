@@ -1,55 +1,38 @@
 #include<stdio.h>
-
+#include<math.h>
+#include<stdlib.h>
 typedef struct{
-	float a,b,c,s;
-} tamgiac tg;
-
-
-
-void nhap(tamgiac tg){
-	scanf("%f %f %f",&tg.a, &tg.b, &tg.c);
+	float a,b,c;
+} TamGiac;
+void nhap(TamGiac *tg){
+	scanf("%f %f %f",&tg->a, &tg->b, &tg->c);
 }
-
-double dienTich(tamgiac tg){
-	double p= (tg.a+tg.b+tg.c)/2.0;
-	double s= sqrt(p*(p-tg.a)*(p-tg.b)*(p-tg.c));
-	return s;
+float area(TamGiac tg){
+	float a=tg.a, b=tg.b, c=tg.c;
+	float p=(a+b+c)/2.0;
+	return (float)sqrt(p*(p-a)*(p-b)*(p-c));
 }
-
-void in(tamgiac tg){
-	printf("%f %f %f",tg.a,tg.b,tg.c);
+void xuat(TamGiac tg){
+	printf("%.0f %.0f %.0f\n", tg.a, tg.b, tg.c);
 }
-
-void sort(int n,tamgiac a){
-
+int cmp(const void *a, const void *b){
+	TamGiac *x = (TamGiac *)a;
+	TamGiac *y = (TamGiac *)b;
+	float area1 = area(*x);
+	float area2 = area(*y);
+ 	if(area1 < area2) return -1;
+	if(area1 > area2) return 1;
+	return 0;
 }
-void ghi(const char *filename, tamgiac *tg, int n){
-	FILE *file=fopen(filename,"wb");
-	if(file== NULL){
-		exit(1);
-	}
-	fwrite(tg,sizeof(tamgiac),n,file);
-	fclose(file);
-}
-int main() {
+int main(){
 	int n;
 	scanf("%d",&n);
-	tamgiac TG[100];
+	TamGiac a[n];
 	for(int i=0;i<n;i++){
-		nhap(TG[i]);
+		nhap(&a[i]);
 	}
+	qsort(a,n,sizeof(TamGiac), cmp);
 	for(int i=0;i<n;i++){
-		for(int j=i+1;j<n;j++){
-			if(TG[j].s>TG[i].s){
-				tg tmp=TG[j];
-				TG[j]=TG[i];
-				TG[i]=tmp;
-			}
-		}
+		xuat(a[i]);
 	}
-	for(int i=0;i<n;i++) {
-		in(TG[i]);
-	}
-	
 }
-
